@@ -1,7 +1,7 @@
 import numpy as np
 import copy
-import time
-from error import absolute_error
+from timeit import default_timer as timer
+from error import absolute_error, mean_absolute_error
 
 
 class gauss_jordan:
@@ -23,7 +23,7 @@ class gauss_jordan:
         tmp_A = copy.deepcopy( self._A )
         tmp_b = copy.deepcopy( self._b )
 
-        ti = time.time( )
+        ti = timer( )
         # cancel the elements located below the main diagonal
         for j in range( self._n - 1 ):
             for i in range( j + 1, self._n, 1 ):
@@ -43,14 +43,14 @@ class gauss_jordan:
         # set each element of the main diagonal equal to 1
         for i in range( self._n ):
             self._solution[ i ] = tmp_b[ i ] / tmp_A[ i, i ]
-        tf = time.time( )
+        tf = timer( )
         self._time = tf - ti
 
         self._status = True
         return self._solution
 
     def calculate_true_error( self, reference: np.ndarray ):
-        self._true_error = absolute_error(solution = self._solution, reference= reference)
+        self._true_error = mean_absolute_error( solution = self._solution, reference = reference )
         return self._true_error
 
     @property
@@ -98,7 +98,7 @@ class gauss_seidel:
         x = None
         n_iter = 0
 
-        ti = time.time( )
+        ti = timer( )
         while error > self._max_error and n_iter <= self._max_iter:
             x = copy.deepcopy( solutions[ -1 ] )
             xi = solutions[ -1 ]
@@ -112,7 +112,7 @@ class gauss_seidel:
             error = absolute_error(solution = xi, reference= x)
             solutions.append( x )
             n_iter += 1
-        tf = time.time( )
+        tf = timer( )
         self._time = tf - ti
 
         if n_iter != self._max_iter + 1:
@@ -124,7 +124,7 @@ class gauss_seidel:
         return self._solution
 
     def calculate_true_error( self, reference: np.ndarray ):
-        self._true_error = absolute_error( solution = self._solution, reference = reference )
+        self._true_error = mean_absolute_error( solution = self._solution, reference = reference )
         return self._true_error
 
     @property
@@ -180,7 +180,7 @@ class jacobi:
         x = None
         n_iter = 0
 
-        ti = time.time( )
+        ti = timer( )
         while error > self._max_error and n_iter <= self._max_iter:
             x = np.full( self._n, 0. )
             xi = solutions[ -1 ]
@@ -194,7 +194,7 @@ class jacobi:
             error = absolute_error(solution = xi, reference= x)
             solutions.append( x )
             n_iter += 1
-        tf = time.time( )
+        tf = timer( )
         self._time = tf - ti
 
         if n_iter != self._max_iter + 1:
@@ -206,7 +206,7 @@ class jacobi:
         return self._solution
 
     def calculate_true_error( self, reference: np.ndarray ):
-        self._true_error = absolute_error( solution = self._solution, reference = reference )
+        self._true_error = mean_absolute_error( solution = self._solution, reference = reference )
         return self._true_error
 
     @property
@@ -253,7 +253,7 @@ class gaussian_elimination:
         tmp_A = copy.deepcopy( self._A )
         tmp_b = copy.deepcopy( self._b )
 
-        ti = time.time( )
+        ti = timer( )
         for j in range( self._n - 1 ):
             for i in range( j + 1, self._n, 1 ):
                 mij = tmp_A[ i, j ] / tmp_A[ j, j ]
@@ -267,14 +267,14 @@ class gaussian_elimination:
             for j in range( self._n - 1, i, -1 ):
                 count += ( - tmp_A[ i, j ] / tmp_A[ i, i ] ) * self._solution[ j ]
             self._solution[ i ] = count
-        tf = time.time( )
+        tf = timer( )
         self._time = tf - ti
 
         self._status = True
         return self._solution
 
     def calculate_true_error( self, reference: np.ndarray ):
-        self._true_error = absolute_error( solution = self._solution, reference = reference )
+        self._true_error = mean_absolute_error( solution = self._solution, reference = reference )
         return self._true_error
 
     @property
@@ -316,7 +316,7 @@ class lu_decomposition:
         tmp_A = copy.deepcopy( self._A )
         tmp_b = copy.deepcopy( self._b )
 
-        ti = time.time( )
+        ti = timer( )
         for j in range( self._n - 1 ):
             for i in range( j + 1, self._n, 1 ):
                 mij = tmp_A[ i, j ] / tmp_A[ j, j ]
@@ -339,14 +339,14 @@ class lu_decomposition:
             for j in range( self._n - 1, i, -1 ):
                 count += ( - self._U[ i, j ] / self._U[ i, i ] ) * self._solution[ j ]
             self._solution[ i ] = count
-        tf = time.time( )
+        tf = timer( )
         self._time = tf - ti
 
         self._status = True
         return self._solution
 
     def calculate_true_error( self, reference: np.ndarray ):
-        self._true_error = absolute_error( solution = self._solution, reference = reference )
+        self._true_error = mean_absolute_error( solution = self._solution, reference = reference )
         return self._true_error
 
     @property
