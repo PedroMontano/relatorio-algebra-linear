@@ -12,6 +12,7 @@ class gauss_jordan:
         self._solution = None
         self._time = None
         self._true_error = None
+        self._status = False
 
     def solve( self, A: np.ndarray, b: np.ndarray ):
         self._A = copy.deepcopy( A )
@@ -45,6 +46,7 @@ class gauss_jordan:
         tf = time.time( )
         self._time = tf - ti
 
+        self._status = True
         return self._solution
 
     def calculate_true_error( self, reference: np.ndarray ):
@@ -63,6 +65,10 @@ class gauss_jordan:
     def true_error( self ):
         return self._true_error
 
+    @property
+    def converged( self ):
+        return self._status
+
 
 class gauss_seidel:
     def __init__( self, guess: np.ndarray, max_error: float = 1.e-3, max_iter: int = 1000 ):
@@ -77,6 +83,7 @@ class gauss_seidel:
         self._n_iter = None
         self._time = None
         self._true_error = None
+        self._status = False
 
     def solve( self, A: np.ndarray, b: np.ndarray ):
         self._A = copy.deepcopy( A )
@@ -108,6 +115,9 @@ class gauss_seidel:
         tf = time.time( )
         self._time = tf - ti
 
+        if n_iter != self._max_iter + 1:
+            self._status = True
+
         self._solution = x
         self._error = error
         self._n_iter = n_iter
@@ -137,6 +147,10 @@ class gauss_seidel:
     def true_error( self ):
         return self._true_error
 
+    @property
+    def converged( self ):
+        return self._status
+
 
 class jacobi:
     def __init__( self, guess: np.ndarray, max_error: float = 1.e-3, max_iter: int = 1000 ):
@@ -151,6 +165,7 @@ class jacobi:
         self._n_iter = None
         self._time = None
         self._true_error = None
+        self._status = False
 
     def solve( self, A: np.ndarray, b: np.ndarray ):
         self._A = copy.deepcopy( A )
@@ -182,6 +197,9 @@ class jacobi:
         tf = time.time( )
         self._time = tf - ti
 
+        if n_iter != self._max_iter + 1:
+            self._status = True
+
         self._solution = x
         self._error = error
         self._n_iter = n_iter
@@ -211,6 +229,10 @@ class jacobi:
     def true_error( self ):
         return self._true_error
 
+    @property
+    def converged( self ):
+        return self._status
+
 
 class gaussian_elimination:
     def __init__( self ):
@@ -220,6 +242,7 @@ class gaussian_elimination:
         self._solution = None
         self._time = None
         self._true_error = None
+        self._status = False
 
     def solve( self, A: np.ndarray, b: np.ndarray ):
         self._A = copy.deepcopy( A )
@@ -247,6 +270,7 @@ class gaussian_elimination:
         tf = time.time( )
         self._time = tf - ti
 
+        self._status = True
         return self._solution
 
     def calculate_true_error( self, reference: np.ndarray ):
@@ -265,6 +289,10 @@ class gaussian_elimination:
     def true_error( self ):
         return self._true_error
 
+    @property
+    def converged( self ):
+        return self._status
+
 
 class lu_decomposition:
     def __init__( self ):
@@ -276,6 +304,7 @@ class lu_decomposition:
         self._L = None
         self._U = None
         self._true_error = None
+        self._status = False
 
     def solve( self, A: np.ndarray, b: np.ndarray ):
         self._A = copy.deepcopy( A )
@@ -313,6 +342,7 @@ class lu_decomposition:
         tf = time.time( )
         self._time = tf - ti
 
+        self._status = True
         return self._solution
 
     def calculate_true_error( self, reference: np.ndarray ):
@@ -338,3 +368,7 @@ class lu_decomposition:
     @property
     def true_error( self ):
         return self._true_error
+
+    @property
+    def converged( self ):
+        return self._status
