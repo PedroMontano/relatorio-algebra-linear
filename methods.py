@@ -1,7 +1,7 @@
 import numpy as np
 import copy
 from timeit import default_timer as timer
-from error import absolute_error, mean_absolute_error
+from error import absolute_error, absolute_mean_error
 
 
 class gauss_jordan:
@@ -50,7 +50,7 @@ class gauss_jordan:
         return self._solution
 
     def calculate_true_error( self, reference: np.ndarray ):
-        self._true_error = mean_absolute_error( solution = self._solution, reference = reference )
+        self._true_error = absolute_mean_error(solution = self._solution, reference = reference)
         return self._true_error
 
     @property
@@ -84,6 +84,7 @@ class gauss_seidel:
         self._time = None
         self._true_error = None
         self._status = False
+        self._error_history = [ ]
 
     def solve( self, A: np.ndarray, b: np.ndarray ):
         self._A = copy.deepcopy( A )
@@ -109,7 +110,8 @@ class gauss_seidel:
                         count += ( - tmp_A[ i, j ] / tmp_A[ i, i ] ) * x[ j ]
                 x[ i ] = count
 
-            error = absolute_error(solution = xi, reference= x)
+            error = absolute_mean_error(solution = xi, reference= x)
+            self._error_history.append( error )
             solutions.append( x )
             n_iter += 1
         tf = timer( )
@@ -124,7 +126,7 @@ class gauss_seidel:
         return self._solution
 
     def calculate_true_error( self, reference: np.ndarray ):
-        self._true_error = mean_absolute_error( solution = self._solution, reference = reference )
+        self._true_error = absolute_mean_error(solution = self._solution, reference = reference)
         return self._true_error
 
     @property
@@ -151,6 +153,10 @@ class gauss_seidel:
     def converged( self ):
         return self._status
 
+    @property
+    def error_history( self ):
+        return self._error_history
+
 
 class jacobi:
     def __init__( self, guess: np.ndarray, max_error: float = 1.e-3, max_iter: int = 1000 ):
@@ -166,6 +172,7 @@ class jacobi:
         self._time = None
         self._true_error = None
         self._status = False
+        self._error_history = [ ]
 
     def solve( self, A: np.ndarray, b: np.ndarray ):
         self._A = copy.deepcopy( A )
@@ -191,7 +198,8 @@ class jacobi:
                         count += ( - tmp_A[ i, j ] / tmp_A[ i, i ] ) * xi[ j ]
                 x[ i ] = count
 
-            error = absolute_error(solution = xi, reference= x)
+            error = absolute_mean_error(solution = xi, reference= x)
+            self._error_history.append( error )
             solutions.append( x )
             n_iter += 1
         tf = timer( )
@@ -206,7 +214,7 @@ class jacobi:
         return self._solution
 
     def calculate_true_error( self, reference: np.ndarray ):
-        self._true_error = mean_absolute_error( solution = self._solution, reference = reference )
+        self._true_error = absolute_mean_error(solution = self._solution, reference = reference)
         return self._true_error
 
     @property
@@ -232,6 +240,10 @@ class jacobi:
     @property
     def converged( self ):
         return self._status
+
+    @property
+    def error_history( self ):
+        return self._error_history
 
 
 class gaussian_elimination:
@@ -274,7 +286,7 @@ class gaussian_elimination:
         return self._solution
 
     def calculate_true_error( self, reference: np.ndarray ):
-        self._true_error = mean_absolute_error( solution = self._solution, reference = reference )
+        self._true_error = absolute_mean_error(solution = self._solution, reference = reference)
         return self._true_error
 
     @property
@@ -346,7 +358,7 @@ class lu_decomposition:
         return self._solution
 
     def calculate_true_error( self, reference: np.ndarray ):
-        self._true_error = mean_absolute_error( solution = self._solution, reference = reference )
+        self._true_error = absolute_mean_error(solution = self._solution, reference = reference)
         return self._true_error
 
     @property

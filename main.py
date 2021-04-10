@@ -80,7 +80,11 @@ for m in _RESULT:
             color_list.append( _COLORS[ s ] )
 
     time_list = np.asarray( time_list ) * 1000.
-    f = p.bar_plot( height_list = time_list, labels = label_list, colors = color_list, y_label = 'Tempo [ms]', title = f'Tempo de Processamento ({m})' )
+    f = p.bar_plot( height_list = time_list,
+                    labels = label_list,
+                    colors = color_list,
+                    y_label = 'Tempo [ms]',
+                    title = f'Tempo de Processamento ({m})' )
     f.savefig( f'./figures/time_{m}' )
 
 # plot error x method
@@ -96,7 +100,64 @@ for m in _RESULT:
             color_list.append( _COLORS[ s ] )
 
     error_list = np.asarray( error_list )
-    f = p.bar_plot( height_list = error_list, labels = label_list, colors = color_list, y_label = 'Erro Absoluto Médio', title = f'Erro Absoluto Médio ({m})' )
+    f = p.bar_plot( height_list = error_list,
+                    labels = label_list,
+                    colors = color_list,
+                    y_label = 'Erro Absoluto Médio',
+                    title = f'Erro Absoluto Médio ({m})' )
     f.savefig( f'./figures/erro_absoluto_medio_{m}' )
+
+# plot error history for jacobi and gauss-seidel
+for m in _RESULT:
+    x_list = [ ]
+    y_list = [ ]
+    label_list = [ ]
+    color_list = [ ]
+
+    solver1 = _RESULT[ m ][ 'JACOBI' ]
+    solver2 = _RESULT[ m ][ 'GAUSS-SEIDEL' ]
+
+    check = 0
+    if solver1.converged:
+        history = np.log10( np.asarray( solver1.error_history ) )
+        y_list.append( history )
+        x_list.append( [ i + 1 for i in range( len( history ) ) ] )
+        label_list.append( 'JACOBI' )
+        color_list.append( _COLORS[ 'JACOBI' ] )
+        f = p.line_plot( x_list = [ [ i + 1 for i in range( len( history ) ) ] ],
+                         y_list = [ history ],
+                         labels = [ 'JACOBI' ],
+                         colors = [ _COLORS[ 'JACOBI' ] ],
+                         y_label = 'Erro Absoluto Médio (log10)',
+                         x_label = 'Iteração',
+                         title = f'Erro Absoluto Médio x Iteração ({m})' )
+        f.savefig( f'./figures/erro_absoluto_medio_iteracao_jacobi_{m}' )
+        check += 1
+
+    if solver2.converged:
+        history = np.log10( np.asarray( solver2.error_history ) )
+        y_list.append( history )
+        x_list.append( [ i + 1 for i in range( len( history ) ) ] )
+        label_list.append( 'GAUSS-SEIDEL' )
+        color_list.append( _COLORS[ 'GAUSS-SEIDEL' ] )
+        f = p.line_plot( x_list = [ [ i + 1 for i in range( len( history ) ) ] ],
+                         y_list = [ history ],
+                         labels = [ 'GAUSS-SEIDEL' ],
+                         colors = [ _COLORS[ 'GAUSS-SEIDEL' ] ],
+                         y_label = 'Erro Absoluto Médio (log10)',
+                         x_label = 'Iteração',
+                         title = f'Erro Absoluto Médio x Iteração ({m})' )
+        f.savefig( f'./figures/erro_absoluto_medio_iteracao_gauss_seidel_{m}' )
+        check += 1
+
+    if check > 0:
+        f = p.line_plot( x_list = x_list,
+                         y_list = y_list,
+                         labels = label_list,
+                         colors = color_list,
+                         y_label = 'Erro Absoluto Médio (log10)',
+                         x_label = 'Iteração',
+                         title = f'Erro Absoluto Médio x Iteração ({m})' )
+        f.savefig( f'./figures/erro_absoluto_medio_iteracao_jacobi_gauss_seidel_{m}' )
 
 var = 0
