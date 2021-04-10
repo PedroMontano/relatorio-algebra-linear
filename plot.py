@@ -24,7 +24,9 @@ def bar_plot( height_list, labels, y_label = '', title = '', colors = 'random' )
     ax.set_xticklabels( labels, rotation = 15, ha = "right" )
     ax.set_title( title , fontsize = 16 )
     ax.set_ylabel( y_label, fontsize = 12 )
-    ax.set_ylim( [ .95 * min( height_list ), 1.05 * max( height_list ) ] )
+    min_y = min( height_list )
+    max_y = max( height_list )
+    ax.set_ylim( [ min_y - 0.05 * abs( min_y ), max_y + 0.05 * abs( max_y ) ] )
     ax.grid( )
     return  fig
 

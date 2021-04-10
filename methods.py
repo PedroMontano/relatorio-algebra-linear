@@ -1,7 +1,7 @@
 import numpy as np
 import copy
 from timeit import default_timer as timer
-from error import absolute_error, absolute_mean_error
+from error import absolute_error, mean_absolute_error, mean_squared_error
 
 
 class gauss_jordan:
@@ -50,7 +50,7 @@ class gauss_jordan:
         return self._solution
 
     def calculate_true_error( self, reference: np.ndarray ):
-        self._true_error = absolute_mean_error(solution = self._solution, reference = reference)
+        self._true_error = mean_absolute_error(solution = self._solution, reference = reference)
         return self._true_error
 
     @property
@@ -110,7 +110,7 @@ class gauss_seidel:
                         count += ( - tmp_A[ i, j ] / tmp_A[ i, i ] ) * x[ j ]
                 x[ i ] = count
 
-            error = absolute_mean_error(solution = xi, reference= x)
+            error = mean_absolute_error(solution = xi, reference= x)
             self._error_history.append( error )
             solutions.append( x )
             n_iter += 1
@@ -126,7 +126,7 @@ class gauss_seidel:
         return self._solution
 
     def calculate_true_error( self, reference: np.ndarray ):
-        self._true_error = absolute_mean_error(solution = self._solution, reference = reference)
+        self._true_error = mean_absolute_error(solution = self._solution, reference = reference)
         return self._true_error
 
     @property
@@ -198,7 +198,7 @@ class jacobi:
                         count += ( - tmp_A[ i, j ] / tmp_A[ i, i ] ) * xi[ j ]
                 x[ i ] = count
 
-            error = absolute_mean_error(solution = xi, reference= x)
+            error = mean_absolute_error(solution = xi, reference= x)
             self._error_history.append( error )
             solutions.append( x )
             n_iter += 1
@@ -214,7 +214,7 @@ class jacobi:
         return self._solution
 
     def calculate_true_error( self, reference: np.ndarray ):
-        self._true_error = absolute_mean_error(solution = self._solution, reference = reference)
+        self._true_error = mean_absolute_error(solution = self._solution, reference = reference)
         return self._true_error
 
     @property
@@ -286,7 +286,7 @@ class gaussian_elimination:
         return self._solution
 
     def calculate_true_error( self, reference: np.ndarray ):
-        self._true_error = absolute_mean_error(solution = self._solution, reference = reference)
+        self._true_error = mean_absolute_error(solution = self._solution, reference = reference)
         return self._true_error
 
     @property
@@ -358,7 +358,7 @@ class lu_decomposition:
         return self._solution
 
     def calculate_true_error( self, reference: np.ndarray ):
-        self._true_error = absolute_mean_error(solution = self._solution, reference = reference)
+        self._true_error = mean_absolute_error(solution = self._solution, reference = reference)
         return self._true_error
 
     @property

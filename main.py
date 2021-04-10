@@ -3,8 +3,12 @@ from methods import gaussian_elimination, jacobi, gauss_seidel, gauss_jordan, lu
 from matrix import hilbert_matrix, vandermonde_matrix, cauchy_matrix, toeplitz_matrix
 import plot as p
 
+def write_file( data, path ):
+    with open( path, 'w' ) as file:
+        file.writelines( data )
+
 n = 15
-max_error = 1.e-6
+max_error = 1.e-5
 max_iter = 10000
 x = np.full( n, 1. )
 guess = np.full( n, 0.5 )
@@ -43,10 +47,10 @@ coef = [ 1.19, 7.84, 8.29, -1.71, 4.44, 7.06, 7.47, 3.84, 2.41, 2.58, -4.67, 2.5
          -4.04, 3.79, 3.83, 2.36, 7.37, -8.55, 9.74, -8.75, -0.47, 6.95, -2.59, -4.35 ]
 T = toeplitz_matrix( n = n, coef = coef )
 
-_ALL_A = { 'Hilbert': H,
-           'Vandermonde': V,
-           'Cauchy': C,
-           'Toeplitz': T }
+_ALL_A = { 'HILBERT': H,
+           'VANDERMONDE': V,
+           'CAUCHY': C,
+           'TOEPLITZ': T }
 
 _ALL_B = { m: np.dot( _ALL_A[ m ], x ) for m in _ALL_A }
 
@@ -85,7 +89,10 @@ for m in _RESULT:
                     colors = color_list,
                     y_label = 'Tempo [ms]',
                     title = f'Tempo de Processamento ({m})' )
-    f.savefig( f'./figures/time_{m}' )
+    f.savefig( f'./figures/1_time_{m}.png' )
+
+    data = [ str( "{:.32f}".format( time_list[ i ] ) ) + f'\t{label_list[ i ]}\n' for i in range( len( time_list ) ) ]
+    write_file( data = data, path = f'./tables/1_time_{m}.txt' )
 
 # plot error x method
 for m in _RESULT:
@@ -99,13 +106,20 @@ for m in _RESULT:
             label_list.append( s )
             color_list.append( _COLORS[ s ] )
 
-    error_list = np.asarray( error_list )
+    if m != 'VANDERMONDE':
+        # error_list = np.log10( np.asarray( error_list ) )
+        error_list = np.asarray( error_list )
+    else:
+        error_list = np.asarray( error_list )
     f = p.bar_plot( height_list = error_list,
                     labels = label_list,
                     colors = color_list,
                     y_label = 'Erro Absoluto Médio',
                     title = f'Erro Absoluto Médio ({m})' )
-    f.savefig( f'./figures/erro_absoluto_medio_{m}' )
+    f.savefig( f'./figures/2_erro_absoluto_medio{m}.png' )
+
+    data = [ str( "{:.32f}".format( error_list[ i ] ) ) + f'\t{label_list[ i ]}\n' for i in range( len( error_list ) ) ]
+    write_file( data = data, path = f'./tables/2_erro_absoluto_medio_{m}.txt' )
 
 # plot error history for jacobi and gauss-seidel
 for m in _RESULT:
@@ -127,15 +141,10 @@ for m in _RESULT:
         x_list.append( [ i + 1 for i in range( len( history ) ) ] )
         label_list.append( 'JACOBI' )
         color_list.append( _COLORS[ 'JACOBI' ] )
-        # f = p.line_plot( x_list = [ [ i + 1 for i in range( len( history ) ) ] ],
-        #                  y_list = [ history ],
-        #                  labels = [ 'JACOBI' ],
-        #                  colors = [ _COLORS[ 'JACOBI' ] ],
-        #                  y_label = 'Erro Absoluto Médio (log10)',
-        #                  x_label = 'Iteração',
-        #                  title = f'Erro Absoluto Médio x Iteração ({m})' )
-        # f.savefig( f'./figures/erro_absoluto_medio_iteracao_jacobi_{m}' )
         check += 1
+
+        data = [ str( "{:.32f}".format( history[ i ] ) ) + f'\t{i + 1}\n' for i in range( len( history ) ) ]
+        write_file( data = data, path = f'./tables/3_erro_absoluto_medio_iteracao_jacobi_{m}.txt' )
 
     if solver2.converged:
         history = np.log10( np.asarray( solver2.error_history ) )
@@ -144,15 +153,10 @@ for m in _RESULT:
         x_list.append( [ i + 1 for i in range( len( history ) ) ] )
         label_list.append( 'GAUSS-SEIDEL' )
         color_list.append( _COLORS[ 'GAUSS-SEIDEL' ] )
-        # f = p.line_plot( x_list = [ [ i + 1 for i in range( len( history ) ) ] ],
-        #                  y_list = [ history ],
-        #                  labels = [ 'GAUSS-SEIDEL' ],
-        #                  colors = [ _COLORS[ 'GAUSS-SEIDEL' ] ],
-        #                  y_label = 'Erro Absoluto Médio (log10)',
-        #                  x_label = 'Iteração',
-        #                  title = f'Erro Absoluto Médio x Iteração ({m})' )
-        # f.savefig( f'./figures/erro_absoluto_medio_iteracao_gauss_seidel_{m}' )
         check += 1
+
+        data = [ str( "{:.32f}".format( history[ i ] ) ) + f'\t{i + 1}\n' for i in range( len( history ) ) ]
+        write_file( data = data, path = f'./tables/3_erro_absoluto_medio_iteracao_gauss_seidel_{m}.txt' )
 
     if check > 0:
         n_iter = max( n_iter1, n_iter2 )
@@ -163,6 +167,6 @@ for m in _RESULT:
                          y_label = 'Erro Absoluto Médio (log10)',
                          x_label = 'Iteração',
                          title = f'Erro Absoluto Médio x Iteração ({m})' )
-        f.savefig( f'./figures/erro_absoluto_medio_iteracao_jacobi_gauss_seidel_{m}' )
+        f.savefig( f'./figures/3_erro_absoluto_medio_iteracao_jacobi_gauss_seidel_{m}.png' )
 
 var = 0
