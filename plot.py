@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.ticker import MaxNLocator
 
 
 def bar_plot( height_list, labels, y_label = '', title = '', colors = 'random' ):
@@ -28,7 +29,7 @@ def bar_plot( height_list, labels, y_label = '', title = '', colors = 'random' )
     return  fig
 
 
-def line_plot( x_list, y_list, labels, x_label = '', y_label = '', title = '', colors = 'random', marker = '' ):
+def line_plot( x_list, y_list, labels, x_label = '', y_label = '', title = '', xtick_format = int, colors = 'random', marker = '' ):
     """Line Plot
 
     :param marker: type of marker
@@ -52,6 +53,8 @@ def line_plot( x_list, y_list, labels, x_label = '', y_label = '', title = '', c
     ax.set_title( title , fontsize = 16 )
     ax.set_xlabel( x_label, fontsize = 12 )
     ax.set_ylabel( y_label, fontsize = 12 )
+    if xtick_format == int:
+        ax.xaxis.set_major_locator( MaxNLocator( integer = True ) )
     ax.legend( labels )
     ax.grid( )
     return  fig

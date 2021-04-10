@@ -118,39 +118,44 @@ for m in _RESULT:
     solver2 = _RESULT[ m ][ 'GAUSS-SEIDEL' ]
 
     check = 0
+    n_iter1 = 0
+    n_iter2 = 0
     if solver1.converged:
         history = np.log10( np.asarray( solver1.error_history ) )
+        n_iter1 = len( history )
         y_list.append( history )
         x_list.append( [ i + 1 for i in range( len( history ) ) ] )
         label_list.append( 'JACOBI' )
         color_list.append( _COLORS[ 'JACOBI' ] )
-        f = p.line_plot( x_list = [ [ i + 1 for i in range( len( history ) ) ] ],
-                         y_list = [ history ],
-                         labels = [ 'JACOBI' ],
-                         colors = [ _COLORS[ 'JACOBI' ] ],
-                         y_label = 'Erro Absoluto Médio (log10)',
-                         x_label = 'Iteração',
-                         title = f'Erro Absoluto Médio x Iteração ({m})' )
-        f.savefig( f'./figures/erro_absoluto_medio_iteracao_jacobi_{m}' )
+        # f = p.line_plot( x_list = [ [ i + 1 for i in range( len( history ) ) ] ],
+        #                  y_list = [ history ],
+        #                  labels = [ 'JACOBI' ],
+        #                  colors = [ _COLORS[ 'JACOBI' ] ],
+        #                  y_label = 'Erro Absoluto Médio (log10)',
+        #                  x_label = 'Iteração',
+        #                  title = f'Erro Absoluto Médio x Iteração ({m})' )
+        # f.savefig( f'./figures/erro_absoluto_medio_iteracao_jacobi_{m}' )
         check += 1
 
     if solver2.converged:
         history = np.log10( np.asarray( solver2.error_history ) )
+        n_iter2 = len( history )
         y_list.append( history )
         x_list.append( [ i + 1 for i in range( len( history ) ) ] )
         label_list.append( 'GAUSS-SEIDEL' )
         color_list.append( _COLORS[ 'GAUSS-SEIDEL' ] )
-        f = p.line_plot( x_list = [ [ i + 1 for i in range( len( history ) ) ] ],
-                         y_list = [ history ],
-                         labels = [ 'GAUSS-SEIDEL' ],
-                         colors = [ _COLORS[ 'GAUSS-SEIDEL' ] ],
-                         y_label = 'Erro Absoluto Médio (log10)',
-                         x_label = 'Iteração',
-                         title = f'Erro Absoluto Médio x Iteração ({m})' )
-        f.savefig( f'./figures/erro_absoluto_medio_iteracao_gauss_seidel_{m}' )
+        # f = p.line_plot( x_list = [ [ i + 1 for i in range( len( history ) ) ] ],
+        #                  y_list = [ history ],
+        #                  labels = [ 'GAUSS-SEIDEL' ],
+        #                  colors = [ _COLORS[ 'GAUSS-SEIDEL' ] ],
+        #                  y_label = 'Erro Absoluto Médio (log10)',
+        #                  x_label = 'Iteração',
+        #                  title = f'Erro Absoluto Médio x Iteração ({m})' )
+        # f.savefig( f'./figures/erro_absoluto_medio_iteracao_gauss_seidel_{m}' )
         check += 1
 
     if check > 0:
+        n_iter = max( n_iter1, n_iter2 )
         f = p.line_plot( x_list = x_list,
                          y_list = y_list,
                          labels = label_list,
