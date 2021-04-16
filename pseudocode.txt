@@ -1,0 +1,116 @@
+ELIMINAÇÃO GAUSSIANA
+
+função eliminacao_gaussiana( A[ ]: Real, b[ ]: Real ): Real[ ]
+    var N, i, j, k: Inteiro
+    var mij, count: Real
+    // comprimento do vetor
+	N <- | b |
+	var solution[ 1..N ]: Real
+
+    // cancela os elementos abaixo da diagonal principal
+    solution[ 1..N ] <- .0
+    para j <- 1 até N - 1 faça
+        para i <- j + 1 até N faça
+            mij <- A[ i, j ] / A[ j, j ]
+            b[ i ] <- b[ i ] - mij * b[ j ]
+            para k <- j até N faça
+                A[ i, k ] <- A[ i, k ] - mij * A[ j, k ]
+
+    // faz a substituição direta
+    para i <- N até 1 passo -1 faça
+        count <- b[ i ] / A[ i, i ]
+        para j <- N até i passo -1 faça
+            count <- count + ( -A[ i, j ] / A[ i, i ] ) * solution[ j ]
+        solution[ i ] <- count
+    retornar( solution )
+
+GAUSS-JORDAN
+
+função gauss_jordan( A[ ]: Real, b[ ]: Real ): Real[ ]
+    var N, i, j, k, Inteiro
+    var mij: Real
+    // comprimento do vetor
+	N <- | b |
+	var solution[ 1..N ]: Real
+
+    // cancela os elementos abaixo da diagonal principal
+    solution[ 1..N ] <- .0
+    para j <- 1 até N - 1 faça
+        para i <- j + 1 até N faça
+            mij <- A[ i, j ] / A[ j, j ]
+            b[ i ] <- b[ i ] - mij * b[ j ]
+            para k <- j até N faça
+                A[ i, k ] <- A[ i, k ] - mij * A[ j, k ]
+
+    // coloca 1 na diagonal principal
+    para i <- 1 até N faça
+        solution[ i ] <- b[ i ] / A[ i, i ]
+
+    // cancela os elementos acima da diagonal principal
+    para j <- N até 1 passo -1 faça
+        para i <- j - 1 até 1 passo -1 faça
+            mij <- A[ i, j ] / A[ j, j ]
+            b[ i ] <- b[ i ] - mij * b[ j ]
+            A[ i, j ] <- A[ i, j ] - mij * A[ j, j ]
+    retornar( solution )
+
+DECOMPOSIÇÃO LU
+
+
+
+
+
+JACOBI
+
+função jacobi( A[ ]: Real, b[ ]: Real, max_error: Real, max_iter: Inteiro ): Real[ ]
+	var count, error: Real
+	var N, i, j, n_iter: Inteiro
+	// comprimento do vetor
+	N <- | b |
+	var xi[ 1..N ], x[ 1..N ]: Real
+
+	enquanto error > max_error E n_iter <= max_iter faça
+		xi <- x
+		x[ 1..N ] <- .0
+		para i <- 1 até N faça
+			count <- b[ i ] / A[ i, i ]
+			para j <- 1 até N faça
+				se i != j então
+					count <- count + ( -A[ i, j ] / A[ i, i ] ) * xi[ j ]
+			x[ i ] <- count
+		error <- mean_absolute_error( xi, x )
+		n_iter <- n_iter + 1
+	retornar( x )
+
+
+GAUSS-SEIDEL
+
+função gauss_seidel( A[ ]: Real, b[ ]: Real, max_error: Real, max_iter: Inteiro ): Real[ ]
+	var count, error: Real
+	var N, i, j, n_iter: Inteiro
+	// comprimento do vetor
+	N <- | b |
+	var xi[ 1..N ], x[ 1..N ]: Real
+
+	enquanto error > max_error E n_iter <= max_iter faça
+		xi <- x
+		para i <- 1 até N faça
+			count <- b[ i ] / A[ i, i ]
+			para j <- 1 até N faça
+				se i != j então
+					count <- count + ( -A[ i, j ] / A[ i, i ] ) * x[ j ]
+			x[ i ] <- count
+		error <- mean_absolute_error( xi, x )
+		n_iter <- n_iter + 1
+	retornar( x )
+
+função mean_absolute_error( solution[ ]: Real, reference[ ]: Real ): Real
+	var N, i: Inteiro
+	// comprimento do vetor
+	N <- | solution |
+	var mean: Real
+	
+	mean <- .0
+	para i <- 1 até N faça
+		mean <- mean ( abs( solution[ i ] - reference[ i ] ) ) / N
+	retornar( mean )
