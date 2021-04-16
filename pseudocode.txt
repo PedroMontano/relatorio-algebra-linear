@@ -8,7 +8,6 @@ função eliminacao_gaussiana( A[ ]: Real, b[ ]: Real ): Real[ ]
 	var solution[ 1..N ]: Real
 
     // cancela os elementos abaixo da diagonal principal
-    solution[ 1..N ] <- .0
     para j <- 1 até N - 1 faça
         para i <- j + 1 até N faça
             mij <- A[ i, j ] / A[ j, j ]
@@ -17,6 +16,7 @@ função eliminacao_gaussiana( A[ ]: Real, b[ ]: Real ): Real[ ]
                 A[ i, k ] <- A[ i, k ] - mij * A[ j, k ]
 
     // faz a substituição direta
+    solution[ 1..N ] <- .0
     para i <- N até 1 passo -1 faça
         count <- b[ i ] / A[ i, i ]
         para j <- N até i passo -1 faça
@@ -44,21 +44,56 @@ função gauss_jordan( A[ ]: Real, b[ ]: Real ): Real[ ]
 
     // coloca 1 na diagonal principal
     para i <- 1 até N faça
-        solution[ i ] <- b[ i ] / A[ i, i ]
+        para j <- 1 até N faça
+            A[ i, j ] <- A[ i, j ] / A[ i, i ]
+            b[ i ] <- b[ i ] / A[ i, i ]
 
     // cancela os elementos acima da diagonal principal
-    para j <- N até 1 passo -1 faça
+    para j <- N até 2 passo -1 faça
         para i <- j - 1 até 1 passo -1 faça
             mij <- A[ i, j ] / A[ j, j ]
             b[ i ] <- b[ i ] - mij * b[ j ]
             A[ i, j ] <- A[ i, j ] - mij * A[ j, j ]
+    solution <- b
     retornar( solution )
 
 DECOMPOSIÇÃO LU
 
+função decomposicao_lu( A[ ]: Real, b[ ]: Real ): Real[ ]
+    var N, i, j, k, Inteiro
+    var count, mij: Real
+    // comprimento do vetor
+	N <- | b |
+	var solution[ 1..N ]
+	var L[ 1..N, 1..N ], U[ 1..N, 1..N ]: Real
 
+    // cancela os elementos abaixo da diagonal principal
+    solution[ 1..N ] <- .0
+    para j <- 1 até N - 1 faça
+        para i <- j + 1 até N faça
+            mij <- A[ i, j ] / A[ j, j ]
+            L[ i, j ] <- mij
+            para k <- j até N faça
+                A[ i, k ] <- A[ i, k ] - mij * A[ j, k ]
 
+    // resolve o sistema para L
+    solution[ 1..N ] <- .0
+    para i <- 1 até N faça
+        count <- b[ i ] / L[ i, i ]
+        para j <- 1 até i faça
+            count <- count + ( -A[ i, j ] / A[ i, i ] ) * solution[ j ]
+        solution[ i ] <- count
 
+    // resolve o sistema para U
+    U <- A
+    b <- solution
+    solution[ 1..N ] <- .0
+    para i <- N até 1 passo -1 faça
+        count <- b[ i ] / U[ i, i ]
+        para j <- N até i passo -1 faça
+            count <- count + ( -A[ i, j ] / A[ i, i ] ) * solution[ j ]
+        solution[ i ] <- count
+    retornar( solution )
 
 JACOBI
 
