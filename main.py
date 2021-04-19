@@ -116,7 +116,7 @@ for m in _RESULT:
                     colors = color_list,
                     y_label = 'Erro Absoluto Médio',
                     title = f'Erro Absoluto Médio ({m})' )
-    f.savefig( f'./figures/2_erro_absoluto_medio{m}.png' )
+    f.savefig( f'./figures/2_erro_absoluto_medio_{m}.png' )
 
     data = [ str( "{:.32f}".format( error_list[ i ] ) ) + f'\t{label_list[ i ]}\n' for i in range( len( error_list ) ) ]
     write_file( data = data, path = f'./tables/2_erro_absoluto_medio_{m}.txt' )
@@ -164,7 +164,7 @@ for m in _RESULT:
                          y_list = y_list,
                          labels = label_list,
                          colors = color_list,
-                         y_label = 'Erro Absoluto Médio (log10)',
+                         y_label = 'Erro Absoluto Médio [log10]',
                          x_label = 'Iteração',
                          title = f'Erro Absoluto Médio x Iteração ({m})' )
         f.savefig( f'./figures/3_erro_absoluto_medio_iteracao_jacobi_gauss_seidel_{m}.png' )

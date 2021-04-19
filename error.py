@@ -13,4 +13,4 @@ def relative_error( ):
     pass
 
 def mean_relative_error( ):
-    return
+    pass

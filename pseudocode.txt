@@ -118,6 +118,17 @@ função jacobi( A[ ]: Real, b[ ]: Real, max_error: Real, max_iter: Inteiro ): R
 	retornar( x )
 
 
+função mean_absolute_error( solution[ ]: Real, reference[ ]: Real ): Real
+	var N, i: Inteiro
+	// comprimento do vetor
+	N <- | solution |
+	var mean: Real
+
+	mean <- .0
+	para i <- 1 até N faça
+		mean <- mean ( abs( solution[ i ] - reference[ i ] ) ) / N
+	retornar( mean )
+
 GAUSS-SEIDEL
 
 função gauss_seidel( A[ ]: Real, b[ ]: Real, max_error: Real, max_iter: Inteiro ): Real[ ]
@@ -138,14 +149,3 @@ função gauss_seidel( A[ ]: Real, b[ ]: Real, max_error: Real, max_iter: Inteir
 		error <- mean_absolute_error( xi, x )
 		n_iter <- n_iter + 1
 	retornar( x )
-
-função mean_absolute_error( solution[ ]: Real, reference[ ]: Real ): Real
-	var N, i: Inteiro
-	// comprimento do vetor
-	N <- | solution |
-	var mean: Real
-	
-	mean <- .0
-	para i <- 1 até N faça
-		mean <- mean ( abs( solution[ i ] - reference[ i ] ) ) / N
-	retornar( mean )
