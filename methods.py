@@ -2,6 +2,7 @@ import numpy as np
 import copy
 from timeit import default_timer as timer
 from error import absolute_error, mean_absolute_error, mean_squared_error
+from determinant import laplace
 
 
 class gauss_jordan:
@@ -368,6 +369,57 @@ class lu_decomposition:
     @property
     def U( self ):
         return self._U
+
+    @property
+    def time( self ):
+        return self._time
+
+    @property
+    def solution( self ):
+        return self._solution
+
+    @property
+    def true_error( self ):
+        return self._true_error
+
+    @property
+    def converged( self ):
+        return self._status
+
+
+class cramer:
+    def __init__( self ):
+        self._A = None
+        self._b = None
+        self._n = None
+        self._solution = None
+        self._time = None
+        self._true_error = None
+        self._status = False
+
+    def solve( self, A: np.ndarray, b: np.ndarray ):
+        self._A = copy.deepcopy( A )
+        self._n = self._A.shape[ 0 ]
+        self._b = b
+        self._solution = np.full( self._n, 0. )
+
+        ti = timer( )
+        D = laplace( A )
+
+        for j in range( self._n ):
+            tmp_A = copy.deepcopy( self._A )
+            tmp_A[ :, j ] = self._b[ : ]
+            solution = laplace( tmp_A ) / D
+            self._solution[ j ] = solution
+        tf = timer( )
+        self._time = tf - ti
+
+        self._status = True
+        return self._solution
+
+    def calculate_true_error( self, reference: np.ndarray ):
+        self._true_error = mean_absolute_error( solution = self._solution, reference = reference )
+        return self._true_error
 
     @property
     def time( self ):
