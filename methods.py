@@ -405,11 +405,13 @@ class cramer:
 
         ti = timer( )
         D = laplace( A )
+        # D = np.linalg.det( A )
 
         for j in range( self._n ):
             tmp_A = copy.deepcopy( self._A )
             tmp_A[ :, j ] = self._b[ : ]
             solution = laplace( tmp_A ) / D
+            # solution = np.linalg.det( tmp_A ) / D
             self._solution[ j ] = solution
         tf = timer( )
         self._time = tf - ti
