@@ -1,7 +1,9 @@
 import numpy as np
+import shelve
+from scipy.stats import linregress
 from matrix import hilbert_matrix, vandermonde_matrix, cauchy_matrix, toeplitz_matrix
 from methods import cramer
-import shelve
+import plot
 
 
 def persist( filename: str, tag: str, content ):
@@ -24,7 +26,9 @@ def load( filename: str, tag: str = None ) :
 
 
 _PERSIST_FILE = './persistence/SOLVERS'
-n = 9
+_FIGURE_FOLDER = './figures/'
+
+n = 10
 _DIMENSIONS = [ _ for _ in range( 2, n + 1, 1 ) ]
 x = np.full( n, 1. )
 
@@ -49,7 +53,7 @@ set2 = [ 4.29, -31.33, -19.39, -34.55, 72.41, -97.31, -15.27, -10.99, 96.17, 87.
 # C = cauchy_matrix( n = n, x = list( xi ), y = list( yi ) )
 #
 # # Toeplitz matrix
-coef = [ 7.84, 1.19, 8.29, -1.71, 7.06, 7.47, 3.84, 2.41, 2.58, -4.67, -8.84, -8.06, 92.8, -0.72,
+coef = [ 7.84, 8.29, -1.71, 7.06, 7.47, 3.84, 2.41, 2.58, -4.67, -8.84, -8.06, 92.8, -0.72,
          -4.04, 3.79, 3.83, 2.36, 7.37, -8.55, -8.75, -0.47, 6.95, -4.35, -2.59 ]
 # T = toeplitz_matrix( n = n, coef = coef )
 #
@@ -80,62 +84,128 @@ coef = [ 7.84, 1.19, 8.29, -1.71, 7.06, 7.47, 3.84, 2.41, 2.58, -4.67, -8.84, -8
 #
 # _RESULT = load( filename = _PERSIST_FILE, tag = None )
 
-_RESULT = { 'HILBERT':[ ],
-            'VANDERMONDE': [ ],
-            'CAUCHY': [ ],
-            'TOEPLITZ': [ ] }
 
-for i, ni in enumerate( _DIMENSIONS ):
-    print( f'dimension: {ni}' )
-    xi = np.full( ni, 1. )
-
-    # Hilbert matrix
-    print( f'matrix: HILBERT' )
-    H = hilbert_matrix( ni )
-    b_H = np.dot( H, xi )
-
-    solver_H = cramer( )
-    solver_H.solve( H, b_H )
-    _RESULT[ 'HILBERT' ].append( solver_H )
-
-    # Vandermonde matrix
-    print( f'matrix: VANDERMONDE' )
-    alpha = [ i + 1 for i in range( ni ) ]
-    V = vandermonde_matrix( n = ni, coef = alpha )
-    b_V = np.dot( V, xi )
-
-    solver_V = cramer( )
-    solver_V.solve( V, b_V )
-    _RESULT[ 'VANDERMONDE' ].append( solver_V )
-
-    # Cauchy matrix
-    print( f'matrix: CAUCHY' )
-    C = cauchy_matrix( n = ni, x = list( set1 ), y = list( set2 ) )
-    b_C = np.dot( C, xi )
-
-    solver_C = cramer( )
-    solver_C.solve( C, b_C )
-    _RESULT[ 'CAUCHY' ].append( solver_C )
-
-    # Toeplitz matrix
-    print( f'matrix: TOEPLITZ' )
-    center = int( ( 1 + len( coef ) - 1 ) / 2 )
-    coefi = coef[ 1 + center - ni : center + ni ]
-    T = toeplitz_matrix( n = ni, coef = coefi )
-    b_T = np.dot( T, xi )
-
-    solver_T = cramer( )
-    solver_T.solve( T, b_T )
-    _RESULT[ 'TOEPLITZ' ].append( solver_T )
-
+# _RESULT = { 'HILBERT':[ ],
+#             'VANDERMONDE': [ ],
+#             'CAUCHY': [ ],
+#             'TOEPLITZ': [ ] }
+#
+# for i, ni in enumerate( _DIMENSIONS ):
+#     print( f'dimension: {ni}' )
+#     xi = np.full( ni, 1. )
+#
+#     # Hilbert matrix
+#     print( f'matrix: HILBERT' )
+#     H = hilbert_matrix( ni )
+#     b_H = np.dot( H, xi )
+#
+#     solver_H = cramer( )
+#     solver_H.solve( H, b_H )
+#     _RESULT[ 'HILBERT' ].append( solver_H )
+#
+#     # Vandermonde matrix
+#     print( f'matrix: VANDERMONDE' )
+#     alpha = [ i + 1 for i in range( ni ) ]
+#     V = vandermonde_matrix( n = ni, coef = alpha )
+#     b_V = np.dot( V, xi )
+#
+#     solver_V = cramer( )
+#     solver_V.solve( V, b_V )
+#     _RESULT[ 'VANDERMONDE' ].append( solver_V )
+#
+#     # Cauchy matrix
+#     print( f'matrix: CAUCHY' )
+#     C = cauchy_matrix( n = ni, x = list( set1 ), y = list( set2 ) )
+#     b_C = np.dot( C, xi )
+#
+#     solver_C = cramer( )
+#     solver_C.solve( C, b_C )
+#     _RESULT[ 'CAUCHY' ].append( solver_C )
+#
+#     # Toeplitz matrix
+#     print( f'matrix: TOEPLITZ' )
+#     center = int( ( len( coef ) - 1 ) / 2 )
+#     coefi = coef[ 1 + center - ni : center + ni ]
+#     T = toeplitz_matrix( n = ni, coef = coefi )
+#     b_T = np.dot( T, xi )
+#
+#     solver_T = cramer( )
+#     solver_T.solve( T, b_T )
+#     _RESULT[ 'TOEPLITZ' ].append( solver_T )
+#
 # persist( filename = _PERSIST_FILE, tag = 'DIMENSION', content = _RESULT )
+_RESULT = load( filename = _PERSIST_FILE, tag = 'DIMENSION' )
 
 
+_TIME_RESULT = { }
+for m in _RESULT:
+    _TIME_RESULT[ m ] = np.asarray( [ s.time for s in _RESULT[ m ] ] )
 
 
+labels = list( _TIME_RESULT.keys( ) )
+y_list = [ np.log10( value ) for value in _TIME_RESULT.values( ) ]
+x_list = [ _DIMENSIONS for _ in range( 4 ) ]
+f = plot.line_plot( x_list, y_list, labels, x_label = 'Número de Linhas e Colunas', y_label = 'Tempo de Processamento [ log10 ]', title = 'Tempo x Dimensão', xtick_format = int, colors = list( _COLORS.values( ) ), marker = 'o' )
+f.savefig( _FIGURE_FOLDER + '4_dimensao_tempo_all.png' )
 
 
+_REGRESSION = { }
+for i, m in enumerate( _MATRIX_NAMES ):
+    slope, intercept, r_value, p_value, stderr = linregress( x_list[ i ][ 6 : ], y_list[ i ][ 6 : ] )
+    _REGRESSION[ m ] = ( slope, intercept )
 
+a = _REGRESSION[ 'HILBERT' ][ 0 ]
+b = _REGRESSION[ 'HILBERT' ][ 1 ]
+time0 =  ( 10 ** ( a * 12 + b ) ) / 3600
+
+
+# n_target = 12
+# print( f'dimension: {n_target}' )
+# xi = np.full( n_target, 1. )
+#
+# # Hilbert matrix
+# print( f'matrix: HILBERT' )
+# H = hilbert_matrix( n_target )
+# b_H = np.dot( H, xi )
+#
+# solver_H = cramer( )
+# solver_H.solve( H, b_H )
+# _RESULT[ 'HILBERT' ].append( solver_H )
+# persist( filename = _PERSIST_FILE + '12', tag = 'DIMENSION', content = _RESULT )
+#
+# # Vandermonde matrix
+# print( f'matrix: VANDERMONDE' )
+# alpha = [ i + 1 for i in range( n_target ) ]
+# V = vandermonde_matrix( n = n_target, coef = alpha )
+# b_V = np.dot( V, xi )
+#
+# solver_V = cramer( )
+# solver_V.solve( V, b_V )
+# _RESULT[ 'VANDERMONDE' ].append( solver_V )
+# persist( filename = _PERSIST_FILE + '12', tag = 'DIMENSION', content = _RESULT )
+#
+# # Cauchy matrix
+# print( f'matrix: CAUCHY' )
+# C = cauchy_matrix( n = n_target, x = list( set1 ), y = list( set2 ) )
+# b_C = np.dot( C, xi )
+#
+# solver_C = cramer( )
+# solver_C.solve( C, b_C )
+# _RESULT[ 'CAUCHY' ].append( solver_C )
+# persist( filename = _PERSIST_FILE + '12', tag = 'DIMENSION', content = _RESULT )
+#
+# # Toeplitz matrix
+# print( f'matrix: TOEPLITZ' )
+# T = toeplitz_matrix( n = n_target, coef = coef )
+# b_T = np.dot( T, xi )
+#
+# solver_T = cramer( )
+# solver_T.solve( T, b_T )
+# _RESULT[ 'TOEPLITZ' ].append( solver_T )
+# persist( filename = _PERSIST_FILE + '12', tag = 'DIMENSION', content = _RESULT )
+#
+#
+# _RESULT = load( filename = _PERSIST_FILE + '12', tag = 'DIMENSION' )
 
 
 var = 0
