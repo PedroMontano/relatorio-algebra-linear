@@ -1,0 +1,16 @@
+função cramer( val A: Real[ ], val b: Real[ ] ): Real[ ]
+	var n, i: Inteiro
+	var D: Real
+	n <- | A | // função tamanho retorna a quantidade de linhas ou colunas da matriz
+
+	var x[ 1..n ]: Real // inicializa o vetor solução
+	var M[ 1..n, 1..n ]: Real // matriz auxiliar
+	
+	D = laplace( A )
+	para i <- 1 até n faça
+		M <- A
+		M[ 1..n, i ] <- b[ 1..n ] // substitui coluna pelo vetor de coeficientes
+		x[ i ] <- laplace( M ) / D
+	
+	retornar( x )
+		

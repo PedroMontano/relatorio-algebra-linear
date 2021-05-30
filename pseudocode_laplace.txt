@@ -1,0 +1,33 @@
+função laplace( val A: Real[ ] ): Real
+	var det: Real
+	se | A | = 2 então // | · | representa função tamanho
+		det <- ( A[ 1, 1 ] * A[ 2, 2 ] ) -( A[ 1, 2 ] * A[ 2, 1 ] )
+	
+	senão
+		var n, i, k: Inteiro
+		var axis: Inteiro
+		var cofactor: Real
+		n <- | A |
+		i <- SortearInteiro( 1, n ) // escolhe linha ou coluna
+		axis <- SortearInteiro( 0, 1 ) // escolhe direção
+
+		var coef[ 1..n ]: Real
+		// pega os coeficientes
+		se axis = 0 então
+			coef <- A[ i, 1..n ]
+		senão
+			coef <- A[ 1..n, i ]
+
+		det <- .0
+		para k <- 1 até n faça
+			se axis = 0 então
+				A <- remove_linha( A, i ) // remove linha i da matriz A
+				A <- remove_coluna( A, k ) // remove coluna k da matriz A
+			senão
+			    A <- remove_coluna( A, i )
+			    A <- remove_linha( A, k )
+
+			   cofactor <- ( -1 ) ^ ( i + k + 2 ) * laplace( A ) // aplica recursão
+			   det <- det + coef[ k ] * cofactor
+
+	retornar( det )
