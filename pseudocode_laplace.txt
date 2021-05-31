@@ -12,11 +12,10 @@ função laplace( val A: Real[ ] ): Real
 		axis <- SortearInteiro( 0, 1 ) // escolhe direção
 
 		var coef[ 1..n ]: Real
-		// pega os coeficientes
 		se axis = 0 então
-			coef <- A[ i, 1..n ]
+			coef <- A[ i, 1..n ] // pega os coeficientes da linha
 		senão
-			coef <- A[ 1..n, i ]
+			coef <- A[ 1..n, i ] // pega os coeficientes da coluna
 
 		det <- .0
 		para k <- 1 até n faça
