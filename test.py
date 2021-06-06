@@ -1,5 +1,5 @@
 import numpy as np
-from methods import gaussian_elimination, jacobi, gauss_seidel, gauss_jordan, lu_decomposition
+from linear_methods import gaussian_elimination, jacobi, gauss_seidel, gauss_jordan, lu_decomposition
 from matrix import hilbert_matrix, vandermonde_matrix, cauchy_matrix, toeplitz_matrix
 from random import uniform
 

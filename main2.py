@@ -2,7 +2,7 @@ import numpy as np
 import shelve
 from scipy.stats import linregress
 from matrix import hilbert_matrix, vandermonde_matrix, cauchy_matrix, toeplitz_matrix
-from methods import cramer
+from linear_methods import cramer
 import plot
 
 
@@ -145,18 +145,18 @@ for m in _RESULT:
 labels = list( _TIME_RESULT.keys( ) )
 y_list = [ np.log10( value ) for value in _TIME_RESULT.values( ) ]
 x_list = [ _DIMENSIONS for _ in range( 4 ) ]
-f = plot.line_plot( x_list, y_list, labels, x_label = 'Número de Linhas e Colunas', y_label = 'Tempo de Processamento [ log10 ]', title = 'Tempo x Dimensão', xtick_format = int, colors = list( _COLORS.values( ) ), marker = 'o' )
+f = plot.line_plot( x_list, y_list, labels, x_label = 'Ordem da Matriz', y_label = 'Tempo de Processamento [ log10 ]', title = 'Tempo x Dimensão', xtick_format = int, colors = list( _COLORS.values( ) ), marker = 'o' )
 f.savefig( _FIGURE_FOLDER + '4_tempo_dimensao.png' )
 
 
 _REGRESSION = { }
 for i, m in enumerate( _MATRIX_NAMES ):
-    slope, intercept, r_value, p_value, stderr = linregress( x_list[ i ][ 6 : ], y_list[ i ][ 6 : ] )
+    slope, intercept, r_value, p_value, stderr = linregress( x_list[ i ][ 4 : ], y_list[ i ][ 4 : ] )
     _REGRESSION[ m ] = ( slope, intercept )
 
-a = _REGRESSION[ 'HILBERT' ][ 0 ]
-b = _REGRESSION[ 'HILBERT' ][ 1 ]
-time0 =  ( 10 ** ( a * 12 + b ) ) / 3600
+a = _REGRESSION[ 'TOEPLITZ' ][ 0 ]
+b = _REGRESSION[ 'TOEPLITZ' ][ 1 ]
+time0 =  ( 10 ** ( a * 15 + b ) ) / ( 3600 * 24 )
 
 
 height_list = [ ]
@@ -166,7 +166,7 @@ for m in _MATRIX_NAMES:
     error = s.calculate_true_error( reference = np.full( 8, 1. ) )
     height_list.append( np.log10( error ) )
 
-f = plot.bar_plot( height_list = height_list, labels = _MATRIX_NAMES, y_label = 'Erro Absoluto Médio [ log10 ]', colors = list( _COLORS.values( ) ), title = 'Erro Absoluto Médio - Matriz 8x8' )
+f = plot.bar_plot( height_list = height_list, labels = _MATRIX_NAMES, y_label = 'Erro Absoluto Médio [ log10 ]', colors = list( _COLORS.values( ) ), title = 'Erro - Matriz 8x8' )
 f.savefig( _FIGURE_FOLDER + '5_erro_absoluto_medio_matriz_8x8.png' )
 
 
@@ -177,7 +177,7 @@ for m in _MATRIX_NAMES:
 
 y_list = list( _ERROR_RESULT.values( ) )
 x_list = [ _DIMENSIONS for _ in range( 4 ) ]
-f = plot.line_plot( x_list, y_list, labels, x_label = 'Número de Linhas e Colunas', y_label = 'Erro Absoluto Médio [ log10 ]', title = 'Erro Absoluto Médio', xtick_format = int, colors = list( _COLORS.values( ) ), marker = 'o' )
+f = plot.line_plot( x_list, y_list, labels, x_label = 'Ordem da Matriz', y_label = 'Erro Absoluto Médio [ log10 ]', title = 'Erro x Dimensão', xtick_format = int, colors = list( _COLORS.values( ) ), marker = 'o' )
 f.savefig( _FIGURE_FOLDER + '6_erro_dimensao.png' )
 
 
