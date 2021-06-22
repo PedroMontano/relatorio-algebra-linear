@@ -27,10 +27,35 @@ def qr_method( A: np.ndarray, max_error: float, max_iter: int ):
     return eigenvalues, eigenvectors
 
 
+# def singular_value_decomposition( A: np.ndarray ):
+#     A2 = np.dot( A.transpose( ), A )
+#
+#     # # eigenvalues, eigenvectors = qr_method( A = A2, max_error = 1e-6, max_iter = 1000 )
+#     # eigenvalues, eigenvectors = np.linalg.eig( A2 )
+#     #
+#     # n = eigenvalues.shape[ 0 ]
+#     # S = np.identity( n )
+#     # for i  in range( n ): # fill matrix with singular values
+#     #     S[ i, i ] = np.sqrt( eigenvalues[ i ] )
+#     #
+#     # for i in range( n ): # normalize eigenvectors
+#     #     vi = eigenvectors[ :, i ]
+#     #     normalized_vi = normalize_vector( vi )
+#     #     eigenvectors[ :, i ] = normalized_vi[ : ]
+#     #
+#     # U = [ ]
+#     # for i in range( n ): # calculate column vectors of U
+#     #     ui = np.dot( A, eigenvectors[ :, i ] ) / S[ i, i ]
+#     #     U.append( normalize_vector( ui ) )
+#     # U = np.asarray( U ).transpose( )
+#
+#     return U, S, eigenvectors
+
+
 def singular_value_decomposition( A: np.ndarray ):
     A2 = np.dot( A.transpose( ), A )
-    # eigenvalues, eigenvectors = qr_method( A = A2, max_error = 1e-6, max_iter = 1000 )
-    eigenvalues, eigenvectors = np.linalg.eig( A2 )
+
+    eigenvalues, eigenvectors = qr_method( A = A2, max_error = 1e-6, max_iter = 1000 )
 
     n = eigenvalues.shape[ 0 ]
     S = np.identity( n )

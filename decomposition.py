@@ -16,7 +16,7 @@ def gram_schmidt( A: np.ndarray, normalize: bool = True ):
         ai = A[ :, i ]
         ui = ai
         for j in range( i ):
-            ui = ui - proj( orthogonal[ j ], ai )
+            ui = ui - proj( orthogonal[ j ], ai ) # calculate projection
         orthogonal.append( ui )
 
     if normalize:
@@ -28,11 +28,19 @@ def gram_schmidt( A: np.ndarray, normalize: bool = True ):
 
 
 def proj( u: np.ndarray, a: np.ndarray ):
-    return ( np.inner( u, a ) / np.inner( u, u ) ) * u
+    return ( inner_product( u, a ) / inner_product( u, u ) ) * u
+
+
+def norm_vector( v: np.ndarray ):
+    return np.sqrt( np.sum( [ vi ** 2 for vi in v ] ) )
+
+
+def inner_product( u: np.ndarray, v: np.ndarray ):
+    return np.sum( [ ui * vi for ui, vi in zip( list( u ), list( v ) ) ] )
 
 
 def normalize_vector( v: np.ndarray ):
-    norm = np.linalg.norm( v )
+    norm = norm_vector( v )
     if norm != 0:
         return v / norm
     return v
